@@ -15,12 +15,7 @@
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
         <Grid x:Name="Header" Grid.Row="0"></Grid>
-        <Grid x:Name="Content" Grid.Row="1">
-            <StackPanel x:Name="ProfilesContainer" Orientation="Horizontal" HorizontalAlignment="Center" >
-                <Image x:Name="User1" MouseDown="Button_Click1" Source="/FirefoxProfileLauncher;component/Assets/user.png" Height="100" Margin="10"/>
-                <Image x:Name="User2" MouseDown="Button_Click2" Source="/FirefoxProfileLauncher;component/Assets/user.png" Height="100" Margin="10"/>
-            </StackPanel>
-        </Grid>
+        <StackPanel Grid.Row="1" x:Name="ProfilesContainer" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center"/>
         <Grid x:Name="Footer" Grid.Row="2"></Grid>
     </Grid>
 </Page>

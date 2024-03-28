@@ -1,34 +1,32 @@
-﻿using System.Windows;
+﻿using FirefoxProfileLauncher.Browser;
+using FirefoxProfileLauncher.Components;
+using System.Windows;
 using System.Windows.Controls;
 
 namespace FirefoxProfileLauncher;
 
 public partial class HomePage : Page
 {
-    private string _firefoxBaseUrl = "C:\\Program Files\\Mozilla Firefox\\firefox.exe";
-    private string _runProfileArgument = "-P";
-    private string _userProfileName1 = "Pawełek";
-    private string _userProfileName2 = "Ewelinka";
+    private MainWindow MainWindow { get; init; }
+    private IBrowserService _browserService { get; init; }
 
-
-    public HomePage(MainWindow mainWindow)
+    public HomePage(MainWindow mainWindow, IBrowserService browserService)
     {
         MainWindow = mainWindow;
+        _browserService = browserService;
+        _browserService.MainWindow = MainWindow;
+
         InitializeComponent();
+
+        PrepareProfiles();
     }
 
-    public MainWindow MainWindow { get; }
-
-    private void Button_Click1(object sender, RoutedEventArgs e)
+    private void PrepareProfiles()
     {
-        System.Diagnostics.Process.Start(_firefoxBaseUrl, _runProfileArgument + " " + _userProfileName1);
-        MainWindow.Close();
-    }
-
-
-    private void Button_Click2(object sender, RoutedEventArgs e)
-    {
-        System.Diagnostics.Process.Start(_firefoxBaseUrl, _runProfileArgument + " " + _userProfileName2);
-        MainWindow.Close();
+        var profiles = _browserService.GetProfiles();
+        foreach (var profile in profiles)
+        {
+            ProfilesContainer.Children.Add(new UserProfileComponent(profile,_browserService.OpenBrowserWithProfile));
+        }
     }
 }

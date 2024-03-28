@@ -1,16 +1,22 @@
-﻿using System.Windows;
+﻿using FirefoxProfileLauncher.Browser;
+using System.Windows;
+using System.Windows.Input;
 
 namespace FirefoxProfileLauncher;
 
 public partial class MainWindow : Window
 {
-    public MainWindow()
+    private readonly IBrowserService _browserService;
+
+    public MainWindow(IBrowserService browserService)
     {
         InitializeComponent();
-        MainFrame.Content = new HomePage(this);
+
+        _browserService = browserService;
+        MainFrame.Content = new HomePage(this, _browserService);
     }
 
-    private void Label_MouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
+    private void Label_MouseDown(object sender, MouseButtonEventArgs e)
     {
         Close();
     }
