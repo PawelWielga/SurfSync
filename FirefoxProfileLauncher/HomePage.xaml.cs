@@ -1,7 +1,7 @@
 ﻿using FirefoxProfileLauncher.Browser;
 using FirefoxProfileLauncher.Components;
-using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 
 namespace FirefoxProfileLauncher;
 
@@ -26,7 +26,9 @@ public partial class HomePage : Page
         var profiles = _browserService.GetProfiles();
         foreach (var profile in profiles)
         {
-            ProfilesContainer.Children.Add(new UserProfileComponent(profile,_browserService.OpenBrowserWithProfile));
+            ProfilesContainer.Children.Add(new UserProfileComponent(profile, _browserService.OpenBrowserWithProfile));
         }
     }
+
+    private void Image_MouseDown(object sender, MouseButtonEventArgs e) => _browserService.OpenBrowserProfileSettings();
 }

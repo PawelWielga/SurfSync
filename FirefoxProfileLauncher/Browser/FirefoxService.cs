@@ -1,5 +1,6 @@
 ﻿using System.IO;
 using System.Diagnostics;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace FirefoxProfileLauncher.Browser;
 
@@ -67,6 +68,13 @@ public sealed class FirefoxService : IBrowserService
     public void OpenBrowserWithProfile(Profile profile)
     {
         Process.Start(_browserPath, $"-P {profile.Name}");
+#if !DEBUG
         MainWindow?.Close();
+#endif
+    }
+
+    public void OpenBrowserProfileSettings()
+    {
+        Process.Start(_browserPath, "-P");
     }
 }

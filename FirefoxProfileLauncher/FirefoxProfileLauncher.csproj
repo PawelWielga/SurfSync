@@ -9,10 +9,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Assets\2699_color.png" />
     <None Remove="Config\config.json" />
   </ItemGroup>
 
   <ItemGroup>
+    <Resource Include="Assets\2699_color.png" />
     <Content Include="Config\config.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

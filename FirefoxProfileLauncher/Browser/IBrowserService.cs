@@ -6,4 +6,5 @@ public interface IBrowserService
 
     List<Profile> GetProfiles();
     void OpenBrowserWithProfile(Profile profile);
+    void OpenBrowserProfileSettings();
 }

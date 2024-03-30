@@ -12,7 +12,7 @@
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
-            <Border Grid.Row="0" CornerRadius="50" Height="100" Width="100" Background="LightGray">
+            <Border Grid.Row="0" CornerRadius="50" Height="100" Width="100" Background="LightGray" Cursor="Hand">
             
             </Border>
             <TextBlock Margin="0,5" Grid.Row="1" TextAlignment="Center" Text="{Binding Profile.Name, RelativeSource={RelativeSource AncestorType=UserControl}}" />
