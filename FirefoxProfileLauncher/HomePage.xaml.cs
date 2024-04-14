@@ -30,5 +30,5 @@ public partial class HomePage : Page
         }
     }
 
-    private void Image_MouseDown(object sender, MouseButtonEventArgs e) => _browserService.OpenBrowserProfileSettings();
+    private void Image_MouseDownAsync(object sender, MouseButtonEventArgs e) => _browserService.OpenBrowserProfileSettings();
 }

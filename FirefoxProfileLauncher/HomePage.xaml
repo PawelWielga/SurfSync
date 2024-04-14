@@ -15,7 +15,7 @@
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
         <Grid x:Name="Header" Grid.Row="0"></Grid>
-        <Image Grid.Row="1" Source="Assets/2699_color.png" Height="40" Width="40" HorizontalAlignment="Left" VerticalAlignment="Top" MouseDown="Image_MouseDown" Cursor="Hand"/>
+        <Image Grid.Row="1" Source="Assets/2699_color.png" Height="40" Width="40" HorizontalAlignment="Left" VerticalAlignment="Top" MouseDown="Image_MouseDownAsync" Cursor="Hand"/>
         <StackPanel Grid.Row="1" x:Name="ProfilesContainer" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center"/>
         <Grid x:Name="Footer" Grid.Row="2"></Grid>
     </Grid>

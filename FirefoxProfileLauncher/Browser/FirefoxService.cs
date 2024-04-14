@@ -9,6 +9,8 @@ public sealed class FirefoxService : IBrowserService
     public MainWindow MainWindow { get; set; }
 
     private string _browserPath;
+    private string _browserProcessName = "Firefox";
+    private string _browserProfilesProcessName = "Firefox - ";
 
     private string _appDataPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
     private string _firefoxProfilesPath;
@@ -75,6 +77,29 @@ public sealed class FirefoxService : IBrowserService
 
     public void OpenBrowserProfileSettings()
     {
-        Process.Start(_browserPath, "-P");
+        var startInfo = new ProcessStartInfo(_browserPath, "-P");
+        var process = new Process
+        {
+            StartInfo = startInfo,
+            EnableRaisingEvents = true
+        };
+
+        process.Exited += Process_Exited;
+        process.Start();
+    }
+
+    private void Process_Exited(object sender, EventArgs e)
+    {
+        Thread.Sleep(100);
+        var x = Process.GetProcessesByName(_browserProcessName);
+        var asd = x.FirstOrDefault(a => 
+        a.MainWindowTitle.Substring(0, Math.Min(10, a.MainWindowTitle.Length)) == _browserProfilesProcessName);
+        asd.Exited += Process_Exited_2;
+        Console.WriteLine("test");
+    }
+
+    private void Process_Exited_2(object sender, EventArgs e)
+    {
+        Console.WriteLine("test");
     }
 }
