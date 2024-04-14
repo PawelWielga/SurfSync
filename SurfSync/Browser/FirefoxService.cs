@@ -1,8 +1,7 @@
 ﻿using System.IO;
 using System.Diagnostics;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
-namespace FirefoxProfileLauncher.Browser;
+namespace SurfSync.Browser;
 
 public sealed class FirefoxService : IBrowserService
 {

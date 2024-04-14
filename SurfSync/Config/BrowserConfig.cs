@@ -1,6 +1,6 @@
 ﻿using Newtonsoft.Json;
 
-namespace FirefoxProfileLauncher.Config;
+namespace SurfSync.Config;
 
 public sealed class BrowserConfig
 {

@@ -1,4 +1,4 @@
-﻿namespace FirefoxProfileLauncher.Browser;
+﻿namespace SurfSync.Browser;
 
 public sealed class Profile()
 {

@@ -1,10 +1,9 @@
-﻿using FirefoxProfileLauncher.Browser;
-using System.Runtime.CompilerServices;
+﻿using SurfSync.Browser;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 
-namespace FirefoxProfileLauncher.Components;
+namespace SurfSync.Components;
 
 public partial class UserProfileComponent : UserControl
 {

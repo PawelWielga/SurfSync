@@ -1,9 +1,9 @@
-﻿using FirefoxProfileLauncher.Browser;
-using FirefoxProfileLauncher.Config;
+﻿using SurfSync.Browser;
+using SurfSync.Config;
 using Microsoft.Extensions.DependencyInjection;
 using System.Windows;
 
-namespace FirefoxProfileLauncher;
+namespace SurfSync;
 
 public partial class App : Application
 {

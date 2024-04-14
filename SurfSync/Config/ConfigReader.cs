@@ -1,7 +1,7 @@
 ﻿using Newtonsoft.Json;
 using System.IO;
 
-namespace FirefoxProfileLauncher.Config;
+namespace SurfSync.Config;
 
 public sealed class ConfigReader
 {

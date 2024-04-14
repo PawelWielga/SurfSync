@@ -1,8 +1,8 @@
-﻿using FirefoxProfileLauncher.Browser;
+﻿using SurfSync.Browser;
 using System.Windows;
 using System.Windows.Input;
 
-namespace FirefoxProfileLauncher;
+namespace SurfSync;
 
 public partial class MainWindow : Window
 {

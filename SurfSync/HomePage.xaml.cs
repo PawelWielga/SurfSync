@@ -1,9 +1,9 @@
-﻿using FirefoxProfileLauncher.Browser;
-using FirefoxProfileLauncher.Components;
+﻿using SurfSync.Browser;
+using SurfSync.Components;
 using System.Windows.Controls;
 using System.Windows.Input;
 
-namespace FirefoxProfileLauncher;
+namespace SurfSync;
 
 public partial class HomePage : Page
 {
