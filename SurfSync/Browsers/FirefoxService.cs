@@ -1,11 +1,15 @@
 ﻿using System.IO;
 using System.Diagnostics;
+using SurfSync.Models;
+using SurfSync.Enums;
 
 namespace SurfSync.Browser;
 
 public sealed class FirefoxService : IBrowserService
 {
+    public BrowserType BrowserType => BrowserType.firefox;
     public MainWindow MainWindow { get; set; }
+
 
     private string _browserPath;
     private string _browserProcessName = "Firefox";
@@ -13,6 +17,7 @@ public sealed class FirefoxService : IBrowserService
 
     private string _appDataPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
     private string _firefoxProfilesPath;
+
     private List<Profile> _profiles;
 
     public FirefoxService(string browserPath)
@@ -32,7 +37,10 @@ public sealed class FirefoxService : IBrowserService
         {
             if (line.StartsWith("[Profile"))
             {
-                var profile = new Profile();
+                var profile = new Profile {
+                    BrowserType = BrowserType.firefox
+                };
+
                 foreach (var innerLine in File.ReadAllLines(profilesIniFilePath).SkipWhile(l => l != line).Skip(1))
                 {
                     if (innerLine.StartsWith("Name"))
@@ -83,13 +91,17 @@ public sealed class FirefoxService : IBrowserService
             EnableRaisingEvents = true
         };
 
-        process.Exited += Process_Exited;
+        process.Exited += async (sender, args) =>
+        { 
+            await GetFirefoxProfileWindow();
+        };
+
         process.Start();
     }
 
-    private void Process_Exited(object sender, EventArgs e)
+    private async Task GetFirefoxProfileWindow()
     {
-        Thread.Sleep(100);
+        await Task.Delay(1000);
         var x = Process.GetProcessesByName(_browserProcessName);
         var asd = x.FirstOrDefault(a => 
         a.MainWindowTitle.Substring(0, Math.Min(10, a.MainWindowTitle.Length)) == _browserProfilesProcessName);

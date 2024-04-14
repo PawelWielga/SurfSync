@@ -1,11 +1,14 @@
 ﻿using Newtonsoft.Json;
+using SurfSync.Enums;
 using System.IO;
 
 namespace SurfSync.Config;
 
 public sealed class ConfigReader
 {
-    public static string GetBrowserPath()
+    private static List<Browser> Configs { get; set; }
+
+    public static string GetBrowserPath(BrowserType browserType)
     {
         string relativePath = "Config\\config.json";
         string absolutePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, relativePath);
@@ -13,25 +16,20 @@ public sealed class ConfigReader
         if (File.Exists(absolutePath))
         {
             string jsonContent = File.ReadAllText(absolutePath);
-            BrowserConfig config = JsonConvert.DeserializeObject<BrowserConfig>(jsonContent);
+            Configs = JsonConvert.DeserializeObject<BrowsersConfig>(jsonContent).browsers;
 
-            if (config != null && !string.IsNullOrWhiteSpace(config.BrowserPath))
+            var config = Configs.FirstOrDefault(c => c.type == browserType);
+            if (config != null && !string.IsNullOrWhiteSpace(config.path))
             {
-                return config.BrowserPath;
+                return config.path;
+            }
+            else
+            {
+                //TODO: show popup to chose selected browser type path and save to config
             }
         }
 
-        return ReadBrowserPath();
-    }
-
-    public static string ReadBrowserPath()
-    {
-        //TODO: SHOW POPUP TO CHOSE FIREFOX.EXE PATH
-
-        var path = "C:\\Program Files\\Mozilla Firefox\\firefox.exe";
-
-        //TODO: SAVE PATH TO CONFIG.JSON FILE
-
-        return path;
+        //TODO: temporary hardcoded
+        return "C:\\Program Files\\Mozilla Firefox\\firefox.exe";
     }
 }

@@ -1,15 +1,25 @@
 ﻿using Newtonsoft.Json;
+using SurfSync.Enums;
 
 namespace SurfSync.Config;
 
-public sealed class BrowserConfig
+public class Browser
 {
-    [JsonProperty("browserPath")]
-    public string BrowserPath { get; set; }
+    [JsonProperty("type")]
+    public BrowserType type;
 
-    public static BrowserConfig FromJson(string json)
+    [JsonProperty("path")]
+    public string path;
+}
+
+public class BrowsersConfig
+{
+    [JsonProperty("browsers")]
+    public List<Browser> browsers;
+
+    public static BrowsersConfig FromJson(string json)
     {
-        return JsonConvert.DeserializeObject<BrowserConfig>(json);
+        return JsonConvert.DeserializeObject<BrowsersConfig>(json);
     }
 
     public string ToJson()
