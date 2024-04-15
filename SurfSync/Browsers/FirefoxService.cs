@@ -2,6 +2,7 @@
 using System.Diagnostics;
 using SurfSync.Models;
 using SurfSync.Enums;
+using SurfSync.Config;
 
 namespace SurfSync.Browser;
 
@@ -10,19 +11,16 @@ public sealed class FirefoxService : IBrowserService
     public BrowserType BrowserType => BrowserType.firefox;
     public MainWindow MainWindow { get; set; }
 
-
     private string _browserPath;
-    private string _browserProcessName = "Firefox";
-    private string _browserProfilesProcessName = "Firefox - ";
 
     private string _appDataPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
     private string _firefoxProfilesPath;
 
     private List<Profile> _profiles;
 
-    public FirefoxService(string browserPath)
+    public FirefoxService()
     {
-        _browserPath = browserPath;
+        _browserPath = ConfigReader.GetBrowserPath(BrowserType);
 
         _firefoxProfilesPath = Path.Combine(_appDataPath, "Mozilla", "Firefox", "profiles.ini");
 
@@ -32,6 +30,11 @@ public sealed class FirefoxService : IBrowserService
     private List<Profile> DeserializrProfilesIniFile(string profilesIniFilePath)
     {
         var profiles = new List<Profile>();
+
+        if (!Path.Exists(profilesIniFilePath)) {
+            //TODO: Can't find firefox profiles alert
+            return profiles;
+        }
 
         foreach (var line in File.ReadAllLines(profilesIniFilePath))
         {
@@ -84,33 +87,8 @@ public sealed class FirefoxService : IBrowserService
 
     public void OpenBrowserProfileSettings()
     {
-        var startInfo = new ProcessStartInfo(_browserPath, "-P");
-        var process = new Process
-        {
-            StartInfo = startInfo,
-            EnableRaisingEvents = true
-        };
-
-        process.Exited += async (sender, args) =>
-        { 
-            await GetFirefoxProfileWindow();
-        };
-
-        process.Start();
+        Process.Start(_browserPath, "-P");
     }
 
-    private async Task GetFirefoxProfileWindow()
-    {
-        await Task.Delay(1000);
-        var x = Process.GetProcessesByName(_browserProcessName);
-        var asd = x.FirstOrDefault(a => 
-        a.MainWindowTitle.Substring(0, Math.Min(10, a.MainWindowTitle.Length)) == _browserProfilesProcessName);
-        asd.Exited += Process_Exited_2;
-        Console.WriteLine("test");
-    }
 
-    private void Process_Exited_2(object sender, EventArgs e)
-    {
-        Console.WriteLine("test");
-    }
 }

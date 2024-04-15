@@ -1,7 +1,6 @@
 ﻿using SurfSync.Browser;
-using SurfSync.Browsers;
 using SurfSync.Components;
-using SurfSync.Enums;
+using SurfSync.Pages;
 using System.Windows.Controls;
 using System.Windows.Input;
 
@@ -24,7 +23,7 @@ public partial class HomePage : Page
 
     private void PrepareProfiles()
     {
-        foreach (IBrowserService browserService in BrowserServices)
+        foreach (var browserService in BrowserServices)
         {
             var profiles = browserService.GetProfiles();
             foreach (var profile in profiles)
@@ -34,8 +33,8 @@ public partial class HomePage : Page
         }
     }
 
-    private void Image_MouseDownAsync(object sender, MouseButtonEventArgs e) 
+    private void SettingsButton_MouseDown(object sender, MouseButtonEventArgs e)
     {
-        //_browserService.OpenBrowserProfileSettings(); 
+        MainWindow.MainFrame.Content = new SettingsPage(MainWindow);
     }
 }

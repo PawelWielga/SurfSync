@@ -9,7 +9,7 @@ public sealed class ChromeService : IBrowserService
     public MainWindow MainWindow { get; set; }
 
 
-    public ChromeService(string browserPath)
+    public ChromeService()
     {
         
     }
