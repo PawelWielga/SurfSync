@@ -3,5 +3,8 @@
 public enum BrowserType
 {
     firefox,
-    chrome
+    chrome,
+    edge,
+    opera,
+    brave
 }
