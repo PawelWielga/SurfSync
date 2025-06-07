@@ -29,7 +29,12 @@ public sealed class ConfigReader
             }
         }
 
-        //TODO: temporary hardcoded
-        return "C:\\Program Files\\Mozilla Firefox\\firefox.exe";
+        //TODO: temporary hardcoded defaults
+        return browserType switch
+        {
+            BrowserType.firefox => "C:\\Program Files\\Mozilla Firefox\\firefox.exe",
+            BrowserType.chrome => "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe",
+            _ => string.Empty
+        };
     }
 }
