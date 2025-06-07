@@ -2,7 +2,7 @@
 
 namespace SurfSync.Models;
 
-public sealed class Profile()
+public sealed class Profile
 {
     public string Name { get; set; }
     public BrowserType BrowserType { get; set; }
