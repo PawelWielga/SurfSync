@@ -34,6 +34,9 @@ public sealed class ConfigReader
         {
             BrowserType.firefox => "C:\\Program Files\\Mozilla Firefox\\firefox.exe",
             BrowserType.chrome => "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe",
+            BrowserType.edge => "C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe",
+            BrowserType.opera => "C:\\Program Files\\Opera\\opera.exe",
+            BrowserType.brave => "C:\\Program Files\\BraveSoftware\\Brave-Browser\\Application\\brave.exe",
             _ => string.Empty
         };
     }
