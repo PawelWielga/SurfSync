@@ -1,12 +1,12 @@
 ﻿{
 	"browsers": [
-		{
-			"type": "firefox",
-			"path": ""
-		},
-		{
-			"type": "chrome",
-			"path": ""
-		}
-	]
+                {
+                        "type": "firefox",
+                        "path": "C:/Program Files/Mozilla Firefox/firefox.exe"
+                },
+                {
+                        "type": "chrome",
+                        "path": "C:/Program Files/Google/Chrome/Application/chrome.exe"
+                }
+        ]
 }
