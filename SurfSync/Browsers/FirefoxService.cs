@@ -24,51 +24,50 @@ public sealed class FirefoxService : IBrowserService
 
         _firefoxProfilesPath = Path.Combine(_appDataPath, "Mozilla", "Firefox", "profiles.ini");
 
-        _profiles = DeserializrProfilesIniFile(_firefoxProfilesPath);
+        _profiles = DeserializeProfilesIniFile(_firefoxProfilesPath);
     }
 
-    private List<Profile> DeserializrProfilesIniFile(string profilesIniFilePath)
+    private static List<Profile> DeserializeProfilesIniFile(string profilesIniFilePath)
     {
         var profiles = new List<Profile>();
 
-        if (!Path.Exists(profilesIniFilePath)) {
-            //TODO: Can't find firefox profiles alert
+        if (!File.Exists(profilesIniFilePath))
+        {
+            // TODO: Can't find firefox profiles alert
             return profiles;
         }
 
+        Profile? currentProfile = null;
         foreach (var line in File.ReadAllLines(profilesIniFilePath))
         {
             if (line.StartsWith("[Profile"))
             {
-                var profile = new Profile {
+                currentProfile = new Profile
+                {
                     BrowserType = BrowserType.firefox
                 };
+                profiles.Add(currentProfile);
+                continue;
+            }
 
-                foreach (var innerLine in File.ReadAllLines(profilesIniFilePath).SkipWhile(l => l != line).Skip(1))
-                {
-                    if (innerLine.StartsWith("Name"))
-                    {
-                        profile.Name = innerLine.Split('=')[1];
-                        continue;
-                    }
-                    if (innerLine.StartsWith("IsRelative"))
-                    {
-                        profile.IsRelative = int.Parse(innerLine.Split("=")[1]) == 1;
-                        continue;
-                    }
-                    if (innerLine.StartsWith("Path"))
-                    {
-                        profile.Path = innerLine.Split('=')[1];
-                        continue;
-                    }
-                    if (innerLine.StartsWith("Default"))
-                    {
-                        profile.Default = int.Parse(innerLine.Split("=")[1]) == 1;
-                        continue;
-                    }
-                    break;
-                }
-                profiles.Add(profile);
+            if (currentProfile is null)
+                continue;
+
+            if (line.StartsWith("Name"))
+            {
+                currentProfile.Name = line.Split('=')[1];
+            }
+            else if (line.StartsWith("IsRelative"))
+            {
+                currentProfile.IsRelative = int.Parse(line.Split('=')[1]) == 1;
+            }
+            else if (line.StartsWith("Path"))
+            {
+                currentProfile.Path = line.Split('=')[1];
+            }
+            else if (line.StartsWith("Default"))
+            {
+                currentProfile.Default = int.Parse(line.Split('=')[1]) == 1;
             }
         }
 
