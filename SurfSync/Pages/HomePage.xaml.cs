@@ -1,6 +1,10 @@
 ﻿using SurfSync.Browser;
 using SurfSync.Components;
+using SurfSync.Models;
+using SurfSync.Logging;
 using SurfSync.Pages;
+using System.Diagnostics;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 
@@ -18,18 +22,51 @@ public partial class HomePage : Page
 
         InitializeComponent();
 
-        PrepareProfiles();
+        Loaded += HomePage_Loaded;
     }
 
-    private void PrepareProfiles()
+    private async void HomePage_Loaded(object sender, RoutedEventArgs e)
     {
-        foreach (var browserService in BrowserServices)
+        Loaded -= HomePage_Loaded;
+        try
         {
-            var profiles = browserService.GetProfiles();
-            foreach (var profile in profiles)
+            await PrepareProfilesAsync();
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine($"Failed to load profiles: {ex}");
+            ErrorLogger.LogException(ex, "HomePage.Loaded");
+        }
+    }
+
+    private async Task PrepareProfilesAsync()
+    {
+        var profiles = await Task.Run(() =>
+        {
+            var items = new List<(Profile profile, Action<Profile> openAction)>();
+            foreach (var browserService in BrowserServices)
             {
-                ProfilesContainer.Children.Add(new UserProfileComponent(profile, browserService.OpenBrowserWithProfile));
+                try
+                {
+                    var browserProfiles = browserService.GetProfiles();
+                    foreach (var profile in browserProfiles)
+                    {
+                        items.Add((profile, browserService.OpenBrowserWithProfile));
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Debug.WriteLine($"Failed to load {browserService.BrowserType} profiles: {ex}");
+                    ErrorLogger.LogException(ex, $"Load profiles: {browserService.BrowserType}");
+                }
             }
+
+            return items;
+        });
+
+        foreach (var item in profiles)
+        {
+            ProfilesContainer.Children.Add(new UserProfileComponent(item.profile, item.openAction));
         }
     }
 

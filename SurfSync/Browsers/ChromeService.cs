@@ -1,9 +1,11 @@
 ﻿using System.Diagnostics;
 using System.IO;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using SurfSync.Enums;
-using SurfSync.Models;
 using SurfSync.Config;
+using SurfSync.Enums;
+using SurfSync.Logging;
+using SurfSync.Models;
 
 namespace SurfSync.Browser;
 
@@ -12,18 +14,18 @@ public sealed class ChromeService : IBrowserService
     public BrowserType BrowserType => BrowserType.chrome;
     public MainWindow MainWindow { get; set; }
 
-    private readonly string _browserPath;
+    private readonly Lazy<string> _browserPath;
     private readonly string _localAppDataPath = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
     private readonly string _chromeLocalStatePath;
 
-    private readonly List<Profile> _profiles;
+    private readonly Lazy<List<Profile>> _profiles;
 
     public ChromeService()
     {
-        _browserPath = ConfigReader.GetBrowserPath(BrowserType);
+        _browserPath = new Lazy<string>(() => ConfigReader.GetBrowserPath(BrowserType));
         _chromeLocalStatePath = Path.Combine(_localAppDataPath, "Google", "Chrome", "User Data", "Local State");
 
-        _profiles = DeserializeLocalStateFile(_chromeLocalStatePath);
+        _profiles = new Lazy<List<Profile>>(() => DeserializeLocalStateFile(_chromeLocalStatePath));
     }
 
     private static List<Profile> DeserializeLocalStateFile(string localStateFilePath)
@@ -36,8 +38,28 @@ public sealed class ChromeService : IBrowserService
             return profiles;
         }
 
-        var json = File.ReadAllText(localStateFilePath);
-        var localState = JObject.Parse(json);
+        JObject localState;
+        try
+        {
+            var json = File.ReadAllText(localStateFilePath);
+            localState = JObject.Parse(json);
+        }
+        catch (IOException ex)
+        {
+            ErrorLogger.LogException(ex, "Chrome Local State read failed");
+            return profiles;
+        }
+        catch (UnauthorizedAccessException ex)
+        {
+            ErrorLogger.LogException(ex, "Chrome Local State access denied");
+            return profiles;
+        }
+        catch (JsonException ex)
+        {
+            ErrorLogger.LogException(ex, "Chrome Local State parse failed");
+            return profiles;
+        }
+
         var profileSection = localState["profile"];
         var infoCache = profileSection?["info_cache"] as JObject;
         var lastUsed = profileSection?["last_used"]?.ToString();
@@ -61,16 +83,16 @@ public sealed class ChromeService : IBrowserService
         return profiles;
     }
 
-    public List<Profile> GetProfiles() => _profiles;
+    public List<Profile> GetProfiles() => _profiles.Value;
 
     public void OpenBrowserProfileSettings()
     {
-        Process.Start(_browserPath, "chrome://settings/manageProfile");
+        Process.Start(_browserPath.Value, "chrome://settings/manageProfile");
     }
 
     public void OpenBrowserWithProfile(Profile profile)
     {
-        Process.Start(_browserPath, $"--profile-directory=\"{profile.Path}\"");
+        Process.Start(_browserPath.Value, $"--profile-directory=\"{profile.Path}\"");
 #if !DEBUG
         MainWindow?.Close();
 #endif

@@ -10,11 +10,11 @@ public sealed class EdgeService : IBrowserService
     public BrowserType BrowserType => BrowserType.edge;
     public MainWindow MainWindow { get; set; }
 
-    private readonly string _browserPath;
+    private readonly Lazy<string> _browserPath;
 
     public EdgeService()
     {
-        _browserPath = ConfigReader.GetBrowserPath(BrowserType);
+        _browserPath = new Lazy<string>(() => ConfigReader.GetBrowserPath(BrowserType));
     }
 
     public List<Profile> GetProfiles() => new List<Profile>();
@@ -26,7 +26,7 @@ public sealed class EdgeService : IBrowserService
 
     public void OpenBrowserWithProfile(Profile profile)
     {
-        Process.Start(_browserPath);
+        Process.Start(_browserPath.Value);
 #if !DEBUG
         MainWindow?.Close();
 #endif
