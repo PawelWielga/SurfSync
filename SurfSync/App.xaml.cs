@@ -1,6 +1,7 @@
 ﻿using SurfSync.Browsers;
 using System.Windows;
 
+using SurfSync.Config;
 using SurfSync.Logging;
 using System;
 using System.Threading.Tasks;
@@ -17,6 +18,7 @@ public partial class App : Application
         base.OnStartup(e);
 
         ErrorLogger.Initialize();
+        ConfigReader.EnsureConfigExists();
         AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
         DispatcherUnhandledException += App_DispatcherUnhandledException;
         TaskScheduler.UnobservedTaskException += TaskScheduler_UnobservedTaskException;

@@ -11,6 +11,20 @@ public sealed class ConfigReader
     private static List<Browser> _configs;
     private static DateTime _configsWriteTimeUtc = DateTime.MinValue;
 
+    public static void EnsureConfigExists()
+    {
+        if (File.Exists(ConfigPath))
+            return;
+
+        lock (ConfigLock)
+        {
+            if (File.Exists(ConfigPath))
+                return;
+
+            TryWriteDefaultConfig();
+        }
+    }
+
     public static string GetBrowserPath(BrowserType browserType)
     {
         EnsureConfigLoaded();
