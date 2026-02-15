@@ -18,14 +18,10 @@ public sealed class ChromeService : IBrowserService
     private readonly string _localAppDataPath = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
     private readonly string _chromeLocalStatePath;
 
-    private readonly Lazy<List<Profile>> _profiles;
-
     public ChromeService()
     {
         _browserPath = new Lazy<string>(() => ConfigReader.GetBrowserPath(BrowserType));
         _chromeLocalStatePath = Path.Combine(_localAppDataPath, "Google", "Chrome", "User Data", "Local State");
-
-        _profiles = new Lazy<List<Profile>>(() => DeserializeLocalStateFile(_chromeLocalStatePath));
     }
 
     private static List<Profile> DeserializeLocalStateFile(string localStateFilePath)
@@ -83,7 +79,7 @@ public sealed class ChromeService : IBrowserService
         return profiles;
     }
 
-    public List<Profile> GetProfiles() => _profiles.Value;
+    public List<Profile> GetProfiles() => DeserializeLocalStateFile(_chromeLocalStatePath);
 
     public void OpenBrowserProfileSettings()
     {

@@ -1,16 +1,182 @@
 ﻿<Page x:Class="SurfSync.Pages.SettingsPage"
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
       xmlns:local="clr-namespace:SurfSync.Pages"
-      mc:Ignorable="d" 
-      d:DesignHeight="450" d:DesignWidth="800"
-      Title="SettingsPage">
+      mc:Ignorable="d"
+      d:DesignHeight="450"
+      d:DesignWidth="800"
+      Title="SettingsPage"
+      Background="{DynamicResource AppBackgroundBrush}">
 
-    <StackPanel Margin="5,0">
-        <Label x:Name="BackButton" Content="◀️ Back" MouseDown="BackButton_MouseDown" Margin="10,0,0,0"/>
-        <Border Grid.Row="1" Height="1" Background="DarkGray" Margin="10,0"/>
-        <Label Content="Firefox" Margin="0,5,0,0" FontSize="18"/>
-    </StackPanel>
+    <ScrollViewer VerticalScrollBarVisibility="Auto"
+                  Background="{DynamicResource AppBackgroundBrush}">
+        <Grid Margin="20,18,20,16">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+
+            <Button x:Name="BackButton"
+                    Grid.Row="0"
+                    Content="Wroc"
+                    HorizontalAlignment="Left"
+                    Style="{DynamicResource SecondaryButtonStyle}"
+                    Click="BackButton_Click"/>
+
+            <StackPanel Grid.Row="1" Margin="0,14,0,0">
+                <TextBlock Text="Ustawienia"
+                           Style="{DynamicResource SectionTitleStyle}"/>
+                <TextBlock Text="Zarzadzaj widocznoscia i wygladem profili na ekranie glownym."
+                           Margin="0,4,0,0"
+                           Style="{DynamicResource SectionSubtitleStyle}"/>
+            </StackPanel>
+
+            <Border Grid.Row="2"
+                    Margin="0,18,0,0"
+                    Style="{DynamicResource CardBorderStyle}">
+                <StackPanel>
+                    <TextBlock Text="Widoczne profile"
+                               Style="{DynamicResource BodyTextStyle}"
+                               FontSize="16"
+                               FontWeight="SemiBold"/>
+                    <TextBlock Text="Wybierz przegladarki, ktorych profile maja pojawic sie na ekranie glownym."
+                               Margin="0,4,0,0"
+                               Style="{DynamicResource SectionSubtitleStyle}"/>
+
+                    <WrapPanel Margin="0,14,0,2">
+                        <CheckBox x:Name="FirefoxCheckBox" Content="Firefox" Style="{DynamicResource ModernCheckBoxStyle}"/>
+                        <CheckBox x:Name="ChromeCheckBox" Content="Chrome" Style="{DynamicResource ModernCheckBoxStyle}"/>
+                        <CheckBox x:Name="EdgeCheckBox" Content="Edge" Style="{DynamicResource ModernCheckBoxStyle}"/>
+                        <CheckBox x:Name="OperaCheckBox" Content="Opera" Style="{DynamicResource ModernCheckBoxStyle}"/>
+                        <CheckBox x:Name="BraveCheckBox" Content="Brave" Style="{DynamicResource ModernCheckBoxStyle}"/>
+                    </WrapPanel>
+
+                    <Button x:Name="SaveBrowsersButton"
+                            Content="Zapisz wybor przegladarek"
+                            HorizontalAlignment="Left"
+                            Style="{DynamicResource PrimaryButtonStyle}"
+                            Click="SaveBrowsersButton_Click"/>
+                </StackPanel>
+            </Border>
+
+            <Border Grid.Row="3"
+                    Margin="0,12,0,0"
+                    Style="{DynamicResource CardBorderStyle}">
+                <StackPanel>
+                    <TextBlock Text="Widocznosc profili Firefox"
+                               Style="{DynamicResource BodyTextStyle}"
+                               FontSize="16"
+                               FontWeight="SemiBold"/>
+                    <TextBlock Text="Odznacz profile, ktore chcesz ukryc na ekranie glownym (np. default)."
+                               Margin="0,4,0,0"
+                               Style="{DynamicResource SectionSubtitleStyle}"/>
+
+                    <TextBlock x:Name="NoFirefoxProfilesMessage"
+                               Margin="0,12,0,0"
+                               Text="Brak profili Firefox do wyswietlenia."
+                               Visibility="Collapsed"
+                               Style="{DynamicResource SectionSubtitleStyle}"/>
+
+                    <ScrollViewer Margin="0,12,0,0"
+                                  MaxHeight="170"
+                                  VerticalScrollBarVisibility="Auto"
+                                  HorizontalScrollBarVisibility="Disabled">
+                        <StackPanel x:Name="FirefoxProfilesVisibilityContainer"/>
+                    </ScrollViewer>
+
+                    <Button x:Name="SaveFirefoxProfilesVisibilityButton"
+                            Content="Zapisz widocznosc profili Firefox"
+                            Margin="0,10,0,0"
+                            HorizontalAlignment="Left"
+                            Style="{DynamicResource PrimaryButtonStyle}"
+                            Click="SaveFirefoxProfilesVisibilityButton_Click"/>
+                </StackPanel>
+            </Border>
+
+            <Border Grid.Row="4"
+                    Margin="0,12,0,0"
+                    Style="{DynamicResource CardBorderStyle}">
+                <StackPanel>
+                    <TextBlock Text="Kolory profili Firefox"
+                               Style="{DynamicResource BodyTextStyle}"
+                               FontSize="16"
+                               FontWeight="SemiBold"/>
+                    <TextBlock Text="Ustaw kolor koleczka i czcionki dla latwiejszej identyfikacji profilu."
+                               Margin="0,4,0,0"
+                               Style="{DynamicResource SectionSubtitleStyle}"/>
+
+                    <Grid Margin="0,12,0,0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="240"/>
+                            <ColumnDefinition Width="200"/>
+                            <ColumnDefinition Width="200"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Grid.Column="0" Text="Profil" Style="{DynamicResource SectionSubtitleStyle}" FontWeight="SemiBold"/>
+                        <TextBlock Grid.Column="1" Text="Kolor koleczka" Style="{DynamicResource SectionSubtitleStyle}" FontWeight="SemiBold"/>
+                        <TextBlock Grid.Column="2" Text="Kolor czcionki" Style="{DynamicResource SectionSubtitleStyle}" FontWeight="SemiBold"/>
+                    </Grid>
+
+                    <TextBlock x:Name="NoFirefoxProfileColorsMessage"
+                               Margin="0,10,0,0"
+                               Text="Brak profili Firefox do konfiguracji kolorow."
+                               Visibility="Collapsed"
+                               Style="{DynamicResource SectionSubtitleStyle}"/>
+
+                    <ScrollViewer Margin="0,8,0,0"
+                                  MaxHeight="190"
+                                  VerticalScrollBarVisibility="Auto"
+                                  HorizontalScrollBarVisibility="Disabled">
+                        <StackPanel x:Name="FirefoxProfileColorsContainer"/>
+                    </ScrollViewer>
+
+                    <Button x:Name="SaveFirefoxProfileColorsButton"
+                            Content="Zapisz kolory profili Firefox"
+                            Margin="0,10,0,0"
+                            HorizontalAlignment="Left"
+                            Style="{DynamicResource PrimaryButtonStyle}"
+                            Click="SaveFirefoxProfileColorsButton_Click"/>
+                </StackPanel>
+            </Border>
+
+            <Border Grid.Row="5"
+                    Margin="0,12,0,0"
+                    Style="{DynamicResource CardBorderStyle}">
+                <StackPanel>
+                    <TextBlock Text="Nowy profil Firefox"
+                               Style="{DynamicResource BodyTextStyle}"
+                               FontSize="16"
+                               FontWeight="SemiBold"/>
+                    <TextBlock Text="Podaj nazwe profilu i utworz go jednym kliknieciem."
+                               Margin="0,4,0,0"
+                               Style="{DynamicResource SectionSubtitleStyle}"/>
+
+                    <TextBox x:Name="FirefoxProfileNameTextBox"
+                             Margin="0,14,0,0"
+                             MaxLength="40"
+                             Height="38"
+                             VerticalContentAlignment="Center"
+                             Style="{DynamicResource ModernTextBoxStyle}"
+                             ToolTip="Nazwa nowego profilu Firefox"/>
+
+                    <Button x:Name="AddFirefoxProfileButton"
+                            Content="Dodaj profil Firefox"
+                            Margin="0,10,0,0"
+                            HorizontalAlignment="Left"
+                            Style="{DynamicResource PrimaryButtonStyle}"
+                            Click="AddFirefoxProfileButton_Click"/>
+
+                    <TextBlock x:Name="StatusTextBlock"
+                               Margin="0,10,0,0"
+                               TextWrapping="Wrap"
+                               Style="{DynamicResource SectionSubtitleStyle}"/>
+                </StackPanel>
+            </Border>
+        </Grid>
+    </ScrollViewer>
 </Page>

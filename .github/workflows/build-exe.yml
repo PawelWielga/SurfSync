@@ -1,0 +1,43 @@
+name: Build SurfSync EXE
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build-exe:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .NET SDK
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.x
+
+      - name: Restore
+        run: dotnet restore SurfSync.sln
+
+      - name: Publish single-file executable
+        run: dotnet publish SurfSync/SurfSync.csproj -c Release -r win-x64 --self-contained true -o artifacts/SurfSync-win-x64
+
+      - name: Verify EXE exists
+        shell: pwsh
+        run: |
+          if (-not (Test-Path "artifacts/SurfSync-win-x64/SurfSync.exe")) {
+            throw "SurfSync.exe was not generated."
+          }
+
+      - name: Upload EXE artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: SurfSync-win-x64-exe
+          path: artifacts/SurfSync-win-x64/SurfSync.exe
+          if-no-files-found: error

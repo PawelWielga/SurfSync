@@ -17,15 +17,11 @@ public sealed class FirefoxService : IBrowserService
     private readonly string _appDataPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
     private readonly string _firefoxProfilesPath;
 
-    private readonly Lazy<List<Profile>> _profiles;
-
     public FirefoxService()
     {
         _browserPath = new Lazy<string>(() => ConfigReader.GetBrowserPath(BrowserType));
 
         _firefoxProfilesPath = Path.Combine(_appDataPath, "Mozilla", "Firefox", "profiles.ini");
-
-        _profiles = new Lazy<List<Profile>>(() => DeserializeProfilesIniFile(_firefoxProfilesPath));
     }
 
     private static List<Profile> DeserializeProfilesIniFile(string profilesIniFilePath)
@@ -95,11 +91,11 @@ public sealed class FirefoxService : IBrowserService
         return profiles;
     }
 
-    public List<Profile> GetProfiles() => _profiles.Value;
+    public List<Profile> GetProfiles() => DeserializeProfilesIniFile(_firefoxProfilesPath);
 
     public void OpenBrowserWithProfile(Profile profile)
     {
-        Process.Start(_browserPath.Value, $"-P {profile.Name}");
+        Process.Start(_browserPath.Value, $"-P \"{profile.Name}\"");
 #if !DEBUG
         MainWindow?.Close();
 #endif
@@ -110,5 +106,31 @@ public sealed class FirefoxService : IBrowserService
         Process.Start(_browserPath.Value, "-P");
     }
 
+    public void CreateProfile(string profileName)
+    {
+        if (string.IsNullOrWhiteSpace(profileName))
+            throw new ArgumentException("Profile name cannot be empty.", nameof(profileName));
+
+        if (profileName.Contains('"'))
+            throw new ArgumentException("Profile name cannot contain quote characters.", nameof(profileName));
+
+        using var process = Process.Start(new ProcessStartInfo
+        {
+            FileName = _browserPath.Value,
+            Arguments = $"-CreateProfile \"{profileName}\"",
+            UseShellExecute = false,
+            CreateNoWindow = true
+        });
+
+        if (process is null)
+            throw new InvalidOperationException("Failed to start Firefox profile creation process.");
+
+        process.WaitForExit(10000);
+        if (!process.HasExited)
+            throw new TimeoutException("Firefox profile creation timed out.");
+
+        if (process.ExitCode != 0)
+            throw new InvalidOperationException($"Firefox returned non-zero exit code: {process.ExitCode}.");
+    }
 
 }

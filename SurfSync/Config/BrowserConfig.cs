@@ -17,6 +17,15 @@ public class BrowsersConfig
     [JsonProperty("browsers")]
     public List<Browser> browsers;
 
+    [JsonProperty("visibleBrowsers")]
+    public List<BrowserType> visibleBrowsers;
+
+    [JsonProperty("hiddenFirefoxProfiles")]
+    public List<string> hiddenFirefoxProfiles;
+
+    [JsonProperty("profileVisualPreferences")]
+    public List<ProfileVisualPreference> profileVisualPreferences;
+
     public static BrowsersConfig FromJson(string json)
     {
         return JsonConvert.DeserializeObject<BrowsersConfig>(json);
@@ -26,4 +35,19 @@ public class BrowsersConfig
     {
         return JsonConvert.SerializeObject(this);
     }
+}
+
+public class ProfileVisualPreference
+{
+    [JsonProperty("browserType")]
+    public BrowserType browserType;
+
+    [JsonProperty("profileName")]
+    public string profileName;
+
+    [JsonProperty("circleColor")]
+    public string circleColor;
+
+    [JsonProperty("textColor")]
+    public string textColor;
 }

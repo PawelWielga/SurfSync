@@ -1,24 +1,35 @@
-﻿{
-	"browsers": [
-                {
-                        "type": "firefox",
-                        "path": "C:/Program Files/Mozilla Firefox/firefox.exe"
-                },
-                {
-                        "type": "chrome",
-                        "path": "C:/Program Files/Google/Chrome/Application/chrome.exe"
-                },
-                {
-                        "type": "edge",
-                        "path": "C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe"
-                },
-                {
-                        "type": "opera",
-                        "path": "C:/Program Files/Opera/opera.exe"
-                },
-                {
-                        "type": "brave",
-                        "path": "C:/Program Files/BraveSoftware/Brave-Browser/Application/brave.exe"
-                }
-        ]
+{
+  "browsers": [
+    {
+      "type": "firefox",
+      "path": "C:/Program Files/Mozilla Firefox/firefox.exe"
+    },
+    {
+      "type": "chrome",
+      "path": "C:/Program Files/Google/Chrome/Application/chrome.exe"
+    },
+    {
+      "type": "edge",
+      "path": "C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe"
+    },
+    {
+      "type": "opera",
+      "path": "C:/Program Files/Opera/opera.exe"
+    },
+    {
+      "type": "brave",
+      "path": "C:/Program Files/BraveSoftware/Brave-Browser/Application/brave.exe"
+    }
+  ],
+  "visibleBrowsers": [
+    "firefox",
+    "chrome",
+    "edge",
+    "opera",
+    "brave"
+  ],
+  "hiddenFirefoxProfiles": [
+  ],
+  "profileVisualPreferences": [
+  ]
 }

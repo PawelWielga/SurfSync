@@ -1,8 +1,8 @@
 ﻿using SurfSync.Browsers;
 using System.Windows;
-
 using SurfSync.Config;
 using SurfSync.Logging;
+using SurfSync.Theme;
 using System;
 using System.Threading.Tasks;
 using System.Windows.Threading;
@@ -19,13 +19,20 @@ public partial class App : Application
 
         ErrorLogger.Initialize();
         ConfigReader.EnsureConfigExists();
+        ThemeManager.Initialize(this);
+
         AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
         DispatcherUnhandledException += App_DispatcherUnhandledException;
         TaskScheduler.UnobservedTaskException += TaskScheduler_UnobservedTaskException;
 
         var mainWindow = new MainWindow(BrowserResolver.GetBrowsersInstances());
-
         mainWindow.Show();
+    }
+
+    protected override void OnExit(ExitEventArgs e)
+    {
+        ThemeManager.Shutdown();
+        base.OnExit(e);
     }
 
     private static void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
