@@ -20,6 +20,7 @@
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
 
             <Button x:Name="BackButton"
@@ -145,6 +146,40 @@
             </Border>
 
             <Border Grid.Row="5"
+                    Margin="0,12,0,0"
+                    Style="{DynamicResource CardBorderStyle}">
+                <StackPanel>
+                    <TextBlock Text="Remote debugging Firefox"
+                               Style="{DynamicResource BodyTextStyle}"
+                               FontSize="16"
+                               FontWeight="SemiBold"/>
+                    <TextBlock Text="Wlacz parametr --remote-debugging-port dla wybranych profili."
+                               Margin="0,4,0,0"
+                               Style="{DynamicResource SectionSubtitleStyle}"/>
+
+                    <TextBlock x:Name="NoFirefoxRemoteDebuggingProfilesMessage"
+                               Margin="0,12,0,0"
+                               Text="Brak profili Firefox do konfiguracji remote debugging."
+                               Visibility="Collapsed"
+                               Style="{DynamicResource SectionSubtitleStyle}"/>
+
+                    <ScrollViewer Margin="0,12,0,0"
+                                  MaxHeight="170"
+                                  VerticalScrollBarVisibility="Auto"
+                                  HorizontalScrollBarVisibility="Disabled">
+                        <StackPanel x:Name="FirefoxRemoteDebuggingProfilesContainer"/>
+                    </ScrollViewer>
+
+                    <Button x:Name="SaveFirefoxRemoteDebuggingProfilesButton"
+                            Content="Zapisz remote debugging Firefox"
+                            Margin="0,10,0,0"
+                            HorizontalAlignment="Left"
+                            Style="{DynamicResource PrimaryButtonStyle}"
+                            Click="SaveFirefoxRemoteDebuggingProfilesButton_Click"/>
+                </StackPanel>
+            </Border>
+
+            <Border Grid.Row="6"
                     Margin="0,12,0,0"
                     Style="{DynamicResource CardBorderStyle}">
                 <StackPanel>

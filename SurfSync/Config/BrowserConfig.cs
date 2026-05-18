@@ -23,6 +23,9 @@ public class BrowsersConfig
     [JsonProperty("hiddenFirefoxProfiles")]
     public List<string> hiddenFirefoxProfiles;
 
+    [JsonProperty("firefoxRemoteDebuggingProfiles")]
+    public List<string> firefoxRemoteDebuggingProfiles;
+
     [JsonProperty("profileVisualPreferences")]
     public List<ProfileVisualPreference> profileVisualPreferences;
 

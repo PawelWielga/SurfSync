@@ -50,4 +50,24 @@ public class ConfigReaderTests
         Assert.Equal("#FF3A8DFF", visualPreference.circleColor);
         Assert.Equal("#FFFFFFFF", visualPreference.textColor);
     }
+
+    [Fact]
+    public void SetFirefoxRemoteDebuggingProfiles_SavesNormalizedProfileNames()
+    {
+        var baseDir = AppDomain.CurrentDomain.BaseDirectory;
+        var configDir = Path.Combine(baseDir, "Config");
+        Directory.CreateDirectory(configDir);
+        var configPath = Path.Combine(configDir, "config.json");
+
+        File.WriteAllText(configPath, "{\"browsers\":[],\"visibleBrowsers\":[],\"hiddenFirefoxProfiles\":[],\"firefoxRemoteDebuggingProfiles\":[],\"profileVisualPreferences\":[]}");
+
+        ConfigReader.SetFirefoxRemoteDebuggingProfiles(new[] { " default ", "DEFAULT", "", "Work" });
+
+        var profiles = ConfigReader.GetFirefoxRemoteDebuggingProfiles();
+
+        Assert.Equal(2, profiles.Count);
+        Assert.Contains("default", profiles);
+        Assert.Contains("Work", profiles);
+        Assert.True(ConfigReader.IsFirefoxRemoteDebuggingEnabled("DEFAULT"));
+    }
 }

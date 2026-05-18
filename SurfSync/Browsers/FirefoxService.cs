@@ -95,10 +95,21 @@ public sealed class FirefoxService : IBrowserService
 
     public void OpenBrowserWithProfile(Profile profile)
     {
-        Process.Start(_browserPath.Value, $"-P \"{profile.Name}\"");
+        Process.Start(_browserPath.Value, BuildOpenProfileArguments(profile));
 #if !DEBUG
         MainWindow?.Close();
 #endif
+    }
+
+    private static string BuildOpenProfileArguments(Profile profile)
+    {
+        var arguments = new List<string>();
+
+        if (ConfigReader.IsFirefoxRemoteDebuggingEnabled(profile?.Name))
+            arguments.Add("--remote-debugging-port");
+
+        arguments.Add($"-P \"{profile?.Name}\"");
+        return string.Join(" ", arguments);
     }
 
     public void OpenBrowserProfileSettings()

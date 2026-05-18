@@ -79,6 +79,33 @@ public sealed class ConfigReader
         }
     }
 
+    public static IReadOnlyCollection<string> GetFirefoxRemoteDebuggingProfiles()
+    {
+        var config = GetConfig();
+        return NormalizeProfileNames(config.firefoxRemoteDebuggingProfiles);
+    }
+
+    public static void SetFirefoxRemoteDebuggingProfiles(IEnumerable<string> profileNames)
+    {
+        var selectedProfiles = NormalizeProfileNames(profileNames);
+
+        lock (ConfigLock)
+        {
+            var config = LoadConfigNoLock();
+            config.firefoxRemoteDebuggingProfiles = selectedProfiles;
+            SaveConfigNoLock(config);
+        }
+    }
+
+    public static bool IsFirefoxRemoteDebuggingEnabled(string profileName)
+    {
+        if (string.IsNullOrWhiteSpace(profileName))
+            return false;
+
+        return GetFirefoxRemoteDebuggingProfiles()
+            .Contains(profileName.Trim(), StringComparer.OrdinalIgnoreCase);
+    }
+
     public static IReadOnlyCollection<ProfileVisualPreference> GetProfileVisualPreferences()
     {
         var config = GetConfig();
@@ -144,6 +171,7 @@ public sealed class ConfigReader
         _config.browsers ??= new List<Browser>();
         _config.visibleBrowsers = _config.visibleBrowsers?.Distinct().ToList();
         _config.hiddenFirefoxProfiles = NormalizeHiddenProfiles(_config.hiddenFirefoxProfiles);
+        _config.firefoxRemoteDebuggingProfiles = NormalizeProfileNames(_config.firefoxRemoteDebuggingProfiles);
         _config.profileVisualPreferences = NormalizeProfileVisualPreferences(_config.profileVisualPreferences);
         _configWriteTimeUtc = writeTimeUtc;
 
@@ -167,6 +195,7 @@ public sealed class ConfigReader
         config.browsers ??= new List<Browser>();
         config.visibleBrowsers ??= new List<BrowserType>();
         config.hiddenFirefoxProfiles = NormalizeHiddenProfiles(config.hiddenFirefoxProfiles);
+        config.firefoxRemoteDebuggingProfiles = NormalizeProfileNames(config.firefoxRemoteDebuggingProfiles);
         config.profileVisualPreferences = NormalizeProfileVisualPreferences(config.profileVisualPreferences);
 
         var configDirectory = Path.GetDirectoryName(ConfigPath);
@@ -196,6 +225,7 @@ public sealed class ConfigReader
                 .ToList(),
             visibleBrowsers = allBrowsers.ToList(),
             hiddenFirefoxProfiles = new List<string>(),
+            firefoxRemoteDebuggingProfiles = new List<string>(),
             profileVisualPreferences = new List<ProfileVisualPreference>()
         };
     }
@@ -219,6 +249,11 @@ public sealed class ConfigReader
     }
 
     private static List<string> NormalizeHiddenProfiles(IEnumerable<string> profileNames)
+    {
+        return NormalizeProfileNames(profileNames);
+    }
+
+    private static List<string> NormalizeProfileNames(IEnumerable<string> profileNames)
     {
         return (profileNames ?? Enumerable.Empty<string>())
             .Select(name => name?.Trim())

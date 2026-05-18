@@ -14,6 +14,7 @@ public partial class SettingsPage : Page
 
     private readonly FirefoxService _firefoxService;
     private readonly Dictionary<CheckBox, string> _firefoxProfileVisibilityCheckBoxes = new();
+    private readonly Dictionary<CheckBox, string> _firefoxRemoteDebuggingCheckBoxes = new();
     private readonly Dictionary<string, ProfileColorSelection> _firefoxProfileColorSelections = new(StringComparer.OrdinalIgnoreCase);
 
     private static readonly IReadOnlyList<ColorChoice> ColorChoices = new List<ColorChoice>
@@ -57,18 +58,22 @@ public partial class SettingsPage : Page
 
     private void LoadFirefoxProfileSections(
         IEnumerable<string> hiddenProfilesOverride = null,
+        IEnumerable<string> remoteDebuggingProfilesOverride = null,
         IEnumerable<ProfileVisualPreference> visualPreferencesOverride = null)
     {
         if (!TryGetFirefoxProfiles(out var profiles, out var noProfilesMessage))
         {
             ShowNoFirefoxProfilesMessage(noProfilesMessage);
+            ShowNoFirefoxRemoteDebuggingProfilesMessage(noProfilesMessage);
             ShowNoFirefoxColorProfilesMessage(noProfilesMessage);
             SaveFirefoxProfilesVisibilityButton.IsEnabled = false;
+            SaveFirefoxRemoteDebuggingProfilesButton.IsEnabled = false;
             SaveFirefoxProfileColorsButton.IsEnabled = false;
             return;
         }
 
         LoadFirefoxProfileVisibilitySelection(profiles, hiddenProfilesOverride);
+        LoadFirefoxRemoteDebuggingSelection(profiles, remoteDebuggingProfilesOverride);
         LoadFirefoxProfileColorSelection(profiles, visualPreferencesOverride);
     }
 
@@ -137,6 +142,33 @@ public partial class SettingsPage : Page
 
         NoFirefoxProfilesMessage.Visibility = Visibility.Collapsed;
         SaveFirefoxProfilesVisibilityButton.IsEnabled = true;
+    }
+
+    private void LoadFirefoxRemoteDebuggingSelection(
+        IEnumerable<(string name, bool isDefault)> profiles,
+        IEnumerable<string> remoteDebuggingProfilesOverride = null)
+    {
+        var remoteDebuggingProfiles = (remoteDebuggingProfilesOverride ?? ConfigReader.GetFirefoxRemoteDebuggingProfiles())
+            .ToHashSet(StringComparer.OrdinalIgnoreCase);
+
+        _firefoxRemoteDebuggingCheckBoxes.Clear();
+        FirefoxRemoteDebuggingProfilesContainer.Children.Clear();
+
+        foreach (var profile in profiles)
+        {
+            var checkBox = new CheckBox
+            {
+                Content = profile.isDefault ? $"{profile.name} (default)" : profile.name,
+                IsChecked = remoteDebuggingProfiles.Contains(profile.name)
+            };
+
+            checkBox.SetResourceReference(StyleProperty, "ModernCheckBoxStyle");
+            _firefoxRemoteDebuggingCheckBoxes[checkBox] = profile.name;
+            FirefoxRemoteDebuggingProfilesContainer.Children.Add(checkBox);
+        }
+
+        NoFirefoxRemoteDebuggingProfilesMessage.Visibility = Visibility.Collapsed;
+        SaveFirefoxRemoteDebuggingProfilesButton.IsEnabled = true;
     }
 
     private void LoadFirefoxProfileColorSelection(
@@ -217,6 +249,12 @@ public partial class SettingsPage : Page
         SetStatus("Zapisano widocznosc profili Firefox.", false);
     }
 
+    private void SaveFirefoxRemoteDebuggingProfilesButton_Click(object sender, RoutedEventArgs e)
+    {
+        SaveFirefoxRemoteDebuggingProfileSelection();
+        SetStatus("Zapisano remote debugging dla profili Firefox.", false);
+    }
+
     private void SaveFirefoxProfileColorsButton_Click(object sender, RoutedEventArgs e)
     {
         SaveFirefoxProfileColorSelection();
@@ -244,8 +282,9 @@ public partial class SettingsPage : Page
             FirefoxProfileNameTextBox.Text = string.Empty;
 
             var hiddenProfiles = GetHiddenFirefoxProfilesFromSelection();
+            var remoteDebuggingProfiles = GetFirefoxRemoteDebuggingProfilesFromSelection();
             var visualPreferences = GetProfileVisualPreferencesFromSelection();
-            LoadFirefoxProfileSections(hiddenProfiles, visualPreferences);
+            LoadFirefoxProfileSections(hiddenProfiles, remoteDebuggingProfiles, visualPreferences);
 
             SetStatus($"Utworzono profil Firefox: {profileName}", false);
         }
@@ -260,6 +299,7 @@ public partial class SettingsPage : Page
     {
         SaveBrowserSelection();
         SaveFirefoxProfileVisibilitySelection();
+        SaveFirefoxRemoteDebuggingProfileSelection();
         SaveFirefoxProfileColorSelection();
         MainWindow.MainFrame.Content = new HomePage(MainWindow, MainWindow.BrowserServices);
     }
@@ -292,6 +332,12 @@ public partial class SettingsPage : Page
         ConfigReader.SetHiddenFirefoxProfiles(hiddenProfiles);
     }
 
+    private void SaveFirefoxRemoteDebuggingProfileSelection()
+    {
+        var remoteDebuggingProfiles = GetFirefoxRemoteDebuggingProfilesFromSelection();
+        ConfigReader.SetFirefoxRemoteDebuggingProfiles(remoteDebuggingProfiles);
+    }
+
     private void SaveFirefoxProfileColorSelection()
     {
         var currentProfileNames = _firefoxProfileColorSelections.Keys.ToHashSet(StringComparer.OrdinalIgnoreCase);
@@ -317,6 +363,17 @@ public partial class SettingsPage : Page
             .ToList();
     }
 
+    private List<string> GetFirefoxRemoteDebuggingProfilesFromSelection()
+    {
+        if (_firefoxRemoteDebuggingCheckBoxes.Count == 0)
+            return ConfigReader.GetFirefoxRemoteDebuggingProfiles().ToList();
+
+        return _firefoxRemoteDebuggingCheckBoxes
+            .Where(pair => pair.Key.IsChecked == true)
+            .Select(pair => pair.Value)
+            .ToList();
+    }
+
     private List<ProfileVisualPreference> GetProfileVisualPreferencesFromSelection()
     {
         return _firefoxProfileColorSelections
@@ -337,6 +394,14 @@ public partial class SettingsPage : Page
         FirefoxProfilesVisibilityContainer.Children.Clear();
         NoFirefoxProfilesMessage.Text = message;
         NoFirefoxProfilesMessage.Visibility = Visibility.Visible;
+    }
+
+    private void ShowNoFirefoxRemoteDebuggingProfilesMessage(string message)
+    {
+        _firefoxRemoteDebuggingCheckBoxes.Clear();
+        FirefoxRemoteDebuggingProfilesContainer.Children.Clear();
+        NoFirefoxRemoteDebuggingProfilesMessage.Text = message;
+        NoFirefoxRemoteDebuggingProfilesMessage.Visibility = Visibility.Visible;
     }
 
     private void ShowNoFirefoxColorProfilesMessage(string message)
